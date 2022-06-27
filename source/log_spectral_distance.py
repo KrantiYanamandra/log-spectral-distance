@@ -23,9 +23,11 @@ def get_log_spectral_distance(audio_buffer_1, audio_buffer_2):
 
 def get_mfcc_euclidean_distance(audio_buffer_1, audio_buffer_2, sr):
 
+    # Compute MFCCs
     mfcc_1 = librosa.feature.mfcc(y=audio_buffer_1, sr=sr, n_mfcc=13)
     mfcc_2 = librosa.feature.mfcc(y=audio_buffer_2, sr=sr, n_mfcc=13)
 
+    # Compute euclidean distance between corresponding MFCCs
     euclidean_distance = np.linalg.norm(np.subtract(mfcc_1, mfcc_2), axis=1)
 
     return np.mean(euclidean_distance)
@@ -82,6 +84,7 @@ def stft_and_spectral_centroid(audio_buffer_1, audio_buffer_2, file_name_1, file
 
 def power_spectra(power_spectrum_1, power_spectrum_2, sr):
 
+    # Visualise power spectra
     fig2, ax2 = plt.subplots(2, 1, sharex='all', figsize=(14, 7))
     fig2.suptitle(f'Log Power spectra')
 
@@ -105,6 +108,7 @@ def power_spectra(power_spectrum_1, power_spectrum_2, sr):
 
 def coherence(audio_buffer_1, audio_buffer_2, frame_size, hop_size, sr):
 
+    # Compute and visualise coherence
     plt.figure()
     plt.grid()
     coherence, _ = plt.cohere(audio_buffer_1, audio_buffer_2, linewidth=1, Fs=sr, NFFT=frame_size, noverlap=hop_size)
@@ -115,6 +119,7 @@ def coherence(audio_buffer_1, audio_buffer_2, frame_size, hop_size, sr):
 
 def band_energy_ratio(audio_buffer_1, audio_buffer_2, file_name_1, file_name_2, frame_size, hop_size, sr):
 
+    # Compute and visualise band energy ratio
     split_at_frequency = 200
 
     stft_1 = librosa.stft(audio_buffer_1, n_fft=frame_size, hop_length=hop_size)
@@ -188,7 +193,7 @@ if __name__ == '__main__':
                                         'features. Note: Requires Python 3')
     parser.add_argument('--audio_path_1', help='Absolute path to 1st audio file', type=str, required=True)
     parser.add_argument('--audio_path_2', help='Absolute path to 2nd audio file', type=str, required=True)
-    parser.add_argument('--other_measures', help='If provided, computes additional distance measures and visualises '
+    parser.add_argument('--other_measures', help='If "y", computes additional distance measures and visualises '
                                                  'spectra', type=str, required=False)
 
     args = parser.parse_args()
@@ -222,7 +227,7 @@ if __name__ == '__main__':
     # Print Log Spectral Distance
     print(f'\nLog Spectral Distance = {log_spectral_distance} \n')
 
-    # Generate spectral features and distances and visualise them
+    # Generate other spectral features and distance measures and visualise them
     if args.other_measures == 'y':
 
         mfcc_euclidean_distance, spectral_centroid_distance, ber_distance = visualise_spectra(audio_buffer_1,
@@ -233,7 +238,7 @@ if __name__ == '__main__':
                                                                                               power_spectrum_2,
                                                                                               frame_size, hop_size, sr)
 
-        # Print other distances
+        # Print distances
         print(f'MFCC Euclidean Distance = {mfcc_euclidean_distance} \n')
         print(f'Spectral Centroid Distance = {spectral_centroid_distance} \n')
         print(f'Band Energy Ratio Distance = {ber_distance} \n')
