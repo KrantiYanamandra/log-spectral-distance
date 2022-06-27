@@ -112,8 +112,6 @@ def coherence(audio_buffer_1, audio_buffer_2, frame_size, hop_size, sr):
     plt.title(f'Coherence')
     plt.show()
 
-    return np.abs(10 * np.log10(np.mean(coherence)))
-
 
 def band_energy_ratio(audio_buffer_1, audio_buffer_2, file_name_1, file_name_2, frame_size, hop_size, sr):
 
@@ -173,13 +171,13 @@ def visualise_spectra(audio_buffer_1, audio_buffer_2, file_name_1, file_name_2, 
 
     power_spectra(power_spectrum_1, power_spectrum_2, sr)
 
-    coherence_distance = coherence(audio_buffer_1, audio_buffer_2, frame_size, hop_size, sr)
+    coherence(audio_buffer_1, audio_buffer_2, frame_size, hop_size, sr)
 
     ber_distance = band_energy_ratio(audio_buffer_1, audio_buffer_2, file_name_1, file_name_2, frame_size, hop_size, sr)
 
     mfcc_euclidean_distance = get_mfcc_euclidean_distance(audio_buffer_1, audio_buffer_2, sr)
 
-    return spectral_centroid_distance, mfcc_euclidean_distance, coherence_distance, ber_distance
+    return mfcc_euclidean_distance, spectral_centroid_distance, ber_distance
 
 
 if __name__ == '__main__':
@@ -227,17 +225,15 @@ if __name__ == '__main__':
     # Generate spectral features and distances and visualise them
     if args.other_measures == 'y':
 
-        spectral_centroid_distance, mfcc_euclidean_distance, coherence_distance, ber_distance = visualise_spectra(
-            audio_buffer_1,
-            audio_buffer_2,
-            file_name_1,
-            file_name_2,
-            power_spectrum_1,
-            power_spectrum_2,
-            frame_size, hop_size, sr)
+        mfcc_euclidean_distance, spectral_centroid_distance, ber_distance = visualise_spectra(audio_buffer_1,
+                                                                                              audio_buffer_2,
+                                                                                              file_name_1,
+                                                                                              file_name_2,
+                                                                                              power_spectrum_1,
+                                                                                              power_spectrum_2,
+                                                                                              frame_size, hop_size, sr)
 
         # Print other distances
         print(f'MFCC Euclidean Distance = {mfcc_euclidean_distance} \n')
         print(f'Spectral Centroid Distance = {spectral_centroid_distance} \n')
         print(f'Band Energy Ratio Distance = {ber_distance} \n')
-        print(f'Coherence Distance = {coherence_distance} \n')
